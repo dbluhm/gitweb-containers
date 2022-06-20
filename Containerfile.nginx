@@ -1,5 +1,7 @@
 FROM nginx:mainline-alpine
 EXPOSE 3000/tcp
+ENV CGI_SERVER=gitweb-cgi
+ENV CGI_PORT=9000
 RUN apk add --update --no-cache \
         git-gitweb
 
