@@ -16,11 +16,9 @@ nginx: | pod
 server: | pod
 	podman build -t git-server -f Containerfile.git .
 	podman create --name git-server --pod git \
-		-e GIT_PROJECT_ROOT=/srv/git \
 		-e GIT_SITE_NAME=test \
 		-e GIT_DEFAULT_PROJECTS_ORDER=age \
 		-v /srv/git:/srv/git:z \
-		-v /srv/git-server/gitweb.conf:/etc/gitweb.conf:z \
 		git-server
 
 clean:
