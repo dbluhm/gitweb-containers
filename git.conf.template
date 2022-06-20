@@ -1,0 +1,37 @@
+##
+# HTTP Git Server
+##
+
+server {
+    listen 3000;
+    listen [::]:3000;
+    gzip off;
+
+
+    location /gitweb.cgi {
+        root /usr/share/gitweb;
+        include fastcgi_params;
+        gzip off;
+        fastcgi_param SCRIPT_FILENAME /usr/share/gitweb/gitweb.cgi;
+        fastcgi_param GITWEB_CONFIG /etc/gitweb.conf;
+        fastcgi_pass git-server:9000;
+    }
+
+    location / {
+        root /usr/share/gitweb;
+        index gitweb.cgi;
+    }
+
+    location ~ (/.*\.git.*) {
+        # fcgiwrap is set up to listen on this host:port
+        fastcgi_pass  git-server:9000;
+        include       fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME     /usr/libexec/git-core/git-http-backend;
+
+        # export all repositories under GIT_PROJECT_ROOT
+        fastcgi_param GIT_HTTP_EXPORT_ALL "";
+        fastcgi_param GIT_PROJECT_ROOT    /srv/git;
+        fastcgi_param PATH_INFO           $1;
+        fastcgi_param REMOTE_USER $remote_user;
+    }
+}
