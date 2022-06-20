@@ -1,8 +1,8 @@
 name: Publish gitweb nginx Container
 
 on: 
-  release:
-    types: [published]
+  push:
+    branches: [ main ]
 
 # Ensure only the most recent workflow runs.
 concurrency:
@@ -32,13 +32,8 @@ jobs:
             ghcr.io/${{ steps.lowercase_repo_owner.outputs.lowercase }}/gitweb-nginx
           # generate Docker tags based on the following events/attributes
           tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
             type=sha
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
 
       - name: Log in to the GitHub Container Registry
         uses: docker/login-action@v1
