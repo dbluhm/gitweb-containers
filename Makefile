@@ -6,20 +6,20 @@ network:
 pod: | network
 	podman pod create --name gitweb \
 		--publish 3000:3000 \
-		--network git
+		--network gitweb
 
 nginx: | pod
 	podman build -t gitweb-nginx -f Containerfile.nginx .
-	podman create --name gitweb-nginx --pod git \
-		git-nginx
+	podman create --name gitweb-nginx --pod gitweb \
+		gitweb-nginx
 
 server: | pod
 	podman build -t gitweb-cgi -f Containerfile.cgi .
-	podman create --name gitweb-cgi --pod git \
+	podman create --name gitweb-cgi --pod gitweb \
 		-e GIT_SITE_NAME=test \
 		-e GIT_DEFAULT_PROJECTS_ORDER=age \
-		-v /srv/git:/srv/git:z \
-		git-server
+		-v /tmp/git:/srv/git:z \
+		gitweb-cgi
 
 clean:
 	-podman rm gitweb-cgi

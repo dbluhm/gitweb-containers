@@ -14,7 +14,7 @@ server {
         gzip off;
         fastcgi_param SCRIPT_FILENAME /usr/share/gitweb/gitweb.cgi;
         fastcgi_param GITWEB_CONFIG /etc/gitweb.conf;
-        fastcgi_pass git-server:9000;
+        fastcgi_pass gitweb-cgi:9000;
     }
 
     location / {
@@ -24,7 +24,7 @@ server {
 
     location ~ (/.*\.git.*) {
         # fcgiwrap is set up to listen on this host:port
-        fastcgi_pass  git-server:9000;
+        fastcgi_pass  gitweb-cgi:9000;
         include       fastcgi_params;
         fastcgi_param SCRIPT_FILENAME     /usr/libexec/git-core/git-http-backend;
 
